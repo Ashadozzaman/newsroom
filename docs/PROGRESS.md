@@ -18,7 +18,7 @@ Rules:
 
 | Step | Module | Title | Status | Branch | Notes |
 |------|--------|-------|--------|--------|-------|
-| P00 | M00 | Monorepo bootstrap | [ ] | | |
+| P00 | M00 | Monorepo bootstrap | [~] | main | |
 | P01 | M00 | API platform core | [ ] | | |
 | P02 | M00 | Database layer, migrations & seed | [ ] | | |
 | P03 | M01 | Authentication API | [ ] | | |
