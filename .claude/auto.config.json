@@ -1,0 +1,9 @@
+{
+  "pauseAfter": ["P14", "P19", "P23"],
+  "confirmBefore": { "P20": "015", "P26": "016", "P28": "017" },
+  "maxStepsPerSession": 4,
+  "maxFixRounds": 3,
+  "protectedBranches": ["main", "master"],
+  "branchPrefix": "auto/run-",
+  "verify": { "dockerUp": true, "webE2e": false }
+}

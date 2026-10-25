@@ -1,0 +1,59 @@
+# Local development infrastructure only. Apps run on the host with `pnpm dev`.
+# Production compose lives in docker/compose.prod.yml (created in prompt P28).
+name: newsroom
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: newsroom
+      POSTGRES_PASSWORD: newsroom
+      POSTGRES_DB: newsroom
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro   # creates newsroom_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U newsroom -d newsroom"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # S3-compatible object storage for local dev (MinIO community edition is no longer maintained).
+  # Anonymous access is allowed when no S3 identities are configured — fine for local only.
+  s3:
+    image: chrislusf/seaweedfs:latest
+    command: "server -s3 -s3.port=8333 -dir=/data"
+    ports:
+      - "8333:8333"   # S3 API
+      - "9333:9333"   # master UI
+    volumes:
+      - s3data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # web UI
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+volumes:
+  pgdata:
+  redisdata:
+  s3data:

@@ -1,0 +1,73 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm --filter *)",
+      "Bash(pnpm exec prisma format *)",
+      "Bash(pnpm exec prisma validate *)",
+      "Bash(pnpm exec prisma generate *)",
+      "Bash(node scripts/verify.mjs *)",
+      "Bash(node scripts/commit-step.mjs *)",
+      "Bash(node scripts/auto.mjs *)",
+      "Bash(node scripts/checks/*)",
+      "Bash(docker compose up -d *)",
+      "Bash(docker compose ps *)",
+      "Bash(docker compose logs *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git ls-files *)"
+    ],
+    "deny": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(git switch *)",
+      "Bash(git checkout *)",
+      "Bash(git rebase *)",
+      "Bash(rm -rf *)",
+      "Bash(docker volume rm *)",
+      "Bash(docker compose down -v *)",
+      "Bash(pnpm exec prisma migrate reset *)",
+      "Bash(pnpm --filter api exec prisma migrate reset *)",
+      "Read(./apps/api/.env)",
+      "Read(./apps/api/.env.test)",
+      "Read(./apps/web/.env.local)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/session-context.mjs"],
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/auto-continue.mjs"],
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
